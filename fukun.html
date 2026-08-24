@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>符华姐姐·传讯</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#E1EBF3;--ink:#2c4a5a;--muted:#8aa0b0;--me:#cfe0ec;--accent:#7ba8c8;--accent2:#5a8aaa}
+body{background:var(--bg);font-family:-apple-system,PingFang SC,sans-serif;height:100vh;display:flex;justify-content:center}
+.app{width:100%;max-width:420px;height:100vh;display:flex;flex-direction:column;position:relative;background:var(--bg);background-size:cover}
+.bar{display:flex;align-items:center;justify-content:center;padding:44px 10px 10px;background:rgba(225,235,243,.97);position:relative;flex-shrink:0;border-bottom:1px solid rgba(155,178,192,.17)}
+.bar .bl,.bar .br{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#4f6e84;background:rgba(215,232,242,.65);border-radius:10px;cursor:pointer;flex-shrink:0;transition:.07s}
+.bar .bl{margin-right:auto}.bar .br{margin-left:auto}
+.bar .bt{font-size:16px;color:#345368;font-weight:520;letter-spacing:.3px}
+.chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.msg{display:flex;align-items:flex-start;gap:8px;max-width:100%}
+.msg.me{flex-direction:row-reverse}
+.bub{max-width:76%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.53;white-space:pre-wrap;box-shadow:0 1px 3px rgba(142,172,188,.09)}
+.her .bub{background:#fff;color:var(--ink);border-bottom-left-radius:4px}
+.me .bub{background:var(--me);color:#173645;border-bottom-right-radius:4px}
+.ava{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#a8c8e0,#7ba8c8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;background-size:cover;border:2px solid rgba(253,254,255,.58)}
+.ava.me{background:var(--me);color:var(--ink)}
+.cinfo{font-size:11px;color:var(--muted);margin-top:4px}
+.inp{display:flex;gap:8px;padding:8px 12px 14px;background:rgba(223,233,241,.94);border-top:1px solid rgba(148,174,190,.19);flex-shrink:0}
+.inp input{flex:1;background:#fff;border-radius:20px;padding:10px 16px;font-size:15px;border:1px solid #d4e0ea;outline:none;color:var(--ink)}
+.inp button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:20px;padding:10px 18px;font-size:15px;font-weight:510;cursor:pointer;transition:.06s}
+.inp button:active{opacity:.74}
+.mask{position:fixed;inset:0;background:rgba(23,43,57,.34);z-index:20;opacity:0;pointer-events:none;transition:.32s}
+.mask.s{opacity:1;pointer-events:auto}
+.home{position:fixed;inset:0;z-index:21;background:var(--bg);display:flex;flex-direction:column;transform:scale(1.04);opacity:0;pointer-events:none;transition:.31s}
+.home.s{transform:scale(1);opacity:1;pointer-events:auto}
+.htime{text-align:center;padding:58px 20px 22px}
+.htime .cl{font-size:46px;font-weight:190;color:var(--ink);letter-spacing:2px}
+.htime .dt{font-size:13px;color:var(--muted);margin-top:7px}
+.hgrid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:8px 24px 16px;max-width:330px;margin:0 auto;width:100%}
+.hi{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.hi:active{transform:scale(.91)}
+.hi .c{width:52px;height:52px;border-radius:14px;background:rgba(252,253,254,.71);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--accent2);box-shadow:0 2px 8px rgba(114,149,171,.097)}
+.hi .lb{font-size:11px;color:var(--ink)}
+.hfoot{text-align:center;padding:4px 20px 26px}
+.hfoot .b{display:inline-block;padding:10px 26px;background:rgba(251,253,254,.67);border-radius:24px;font-size:13px;color:var(--ink);cursor:pointer;border:1px solid rgba(153,179,196,.195)}
+.menu{position:fixed;top:0;right:0;bottom:0;z-index:21;width:80%;max-width:290px;background:#f2f7fb;transform:translateX(100%);transition:.33s;display:flex;flex-direction:column;border-left:1px solid #dce7ef}
+.menu.s{transform:translateX(0)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:44px 14px 12px;border-bottom:1px solid #e2ecf2;flex-shrink:0}
+.mh .mt{font-size:16px;font-weight:600;color:#38566c}
+.mh .mx{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#7493a7;background:rgba(154,177,191,.125);cursor:pointer}
+.mb{flex:1;overflow-y:auto;padding:10px 14px}
+.mi{display:flex;align-items:center;justify-content:space-between;padding:13px 2px;border-bottom:1px solid #e6eff4;cursor:pointer}
+.mi:active{background:rgba(224,237,247,.39)}
+.mi .ml{font-size:14px;color:var(--ink)}
+.mi .mr{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.mi .mr .ar{font-size:16px;color:#adc3d2}
+.msc{font-size:11px;color:var(--muted);margin:12px 2px 6px;letter-spacing:.3px}
+.sub{position:fixed;inset:0;z-index:22;background:#f2f7fb;transform:translateX(100%);transition:.3s;display:flex;flex-direction:column}
+.sub.s{transform:translateX(0)}
+.subh{display:flex;align-items:center;gap:8px;padding:42px 14px 12px;border-bottom:1px solid #e2ecf2;flex-shrink:0;background:#f2f7fb}
+.subh .sbk{font-size:24px;color:#537388;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center}
+.subh .stt{font-size:15px;font-weight:600;color:#38566c}
+.subb{flex:1;overflow-y:auto;padding:16px}
+.subb label{font-size:12px;color:#537388;display:block;margin-bottom:4px}
+.subb input,.subb select{width:100%;padding:11px 13px;margin-bottom:10px;border:1px solid #d4e0ea;border-radius:11px;font-size:14px;outline:none;background:#fff;color:var(--ink)}
+.btnp{display:block;width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;text-align:center;margin-top:6px}
+.btnp:active{opacity:.79}
+.btnd{display:block;width:100%;padding:12px;margin-top:6px;background:transparent;color:#e07070;border:1px solid #f0c8c8;border-radius:12px;font-size:14px;cursor:pointer;text-align:center}
+.ol .o{display:block;width:100%;padding:13px;background:#fff;border:1px solid #e3edf3;border-radius:11px;font-size:14px;color:var(--ink);cursor:pointer;text-align:left;margin-bottom:7px}
+.ol .o.s{border-color:var(--accent);background:#eef4f9;font-weight:500}
+.gp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gi{aspect-ratio:1;background:#d4e0ea;border-radius:9px;overflow:hidden;position:relative}
+.gi img{width:100%;height:100%;object-fit:cover}
+.gi .xd{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.41);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer}
+.dc{background:#fff;border-radius:13px;padding:13px;margin-bottom:10px;border:1px solid #e3edf3}
+.dc .dd{font-size:11px;color:var(--muted);margin-bottom:3px}
+.dc .dcr{font-size:11px;color:var(--accent2);margin-bottom:5px}
+.dc .dtx{font-size:14px;line-height:1.62;color:var(--ink);white-space:pre-wrap}
+.toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);background:rgba(34,34,34,.81);color:#fff;font-size:12px;padding:7px 16px;border-radius:18px;z-index:99;opacity:0;pointer-events:none;transition:.25s}
+.toast.s{opacity:1}
+.hid{display:none}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="bar"><div class="bl" id="bkBtn">‹</div><div class="bt" id="nt">符华姐姐</div><div class="br" id="menuBtn">≡</div></div>
+<div class="chat" id="ch"></div>
+<div class="inp"><input id="in" placeholder="写下心情或想问的事…"><button id="sd">传讯</button></div>
+<div class="mask" id="mk"></div>
+<div class="home" id="hp">
+<div class="htime"><div class="cl" id="clk">00:00</div><div class="dt" id="dat"></div></div>
+<div class="hgrid">
+<div class="hi" data-g="album"><div class="c">🖼</div><span class="lb">相册</span></div>
+<div class="hi" data-g="diary"><div class="c">📖</div><span class="lb">日记</span></div>
+<div class="hi" data-g="divine"><div class="c">🔮</div><span class="lb">占卜</span></div>
+<div class="hi" data-g="last"><div class="c">🃏</div><span class="lb">上次牌</span></div>
+<div class="hi" data-g="remark"><div class="c">✏️</div><span class="lb">备注</span></div>
+<div class="hi" data-g="key"><div class="c">🔑</div><span class="lb">API Key</span></div>
+<div class="hi" data-g="theme"><div class="c">🎨</div><span class="lb">主题</span></div>
+<div class="hi" data-g="about"><div class="c">ℹ️</div><span class="lb">关于</span></div>
+</div>
+<div class="hfoot"><div class="b" id="hb">返回聊天</div></div>
+</div>
+<div class="menu" id="mp">
+<div class="mh"><div class="mt">功能菜单</div><div class="mx" id="mc">×</div></div>
+<div class="mb">
+<div class="msc">传讯配置</div>
+<div class="mi" data-r="key"><div class="ml">API Key</div><div class="mr"><span id="ks">未设置</span><span class="ar">›</span></div></div>
+<div class="mi" data-r="model"><div class="ml">AI 模型</div><div class="mr"><span id="mn">glm-4.5-flash</span><span class="ar">›</span></div></div>
+<div class="mi" data-r="remark"><div class="ml">修改备注</div><div class="mr"><span id="rn">符华姐姐</span><span class="ar">›</span></div></div>
+<div class="msc">功能</div>
+<div class="mi" data-r="divine"><div class="ml">占卜·她在想什么</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="mi" data-r="album"><div class="ml">相册</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="mi" data-r="diary"><div class="ml">每日日记</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="mi" data-r="last"><div class="ml">上次抽牌</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="mi" data-r="homepage"><div class="ml">回到主页</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="msc">外观</div>
+<div class="mi" data-r="theme"><div class="ml">主题色</div><div class="mr"><span id="tn">默认蓝</span><span class="ar">›</span></div></div>
+<div class="mi" data-r="avatar"><div class="ml">更换头像</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="mi" data-r="bg"><div class="ml">更换背景</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="msc">其他</div>
+<div class="mi" data-r="reset"><div class="ml">恢复默认</div><div class="mr"><span class="ar">›</span></div></div>
+<div class="mi" data-r="about"><div class="ml">关于</div><div class="mr"><span class="ar">›</span></div></div>
+</div></div>
+<div class="sub" id="sub"><div class="subh"><div class="sbk" id="sbk">‹</div><div class="stt" id="stt">设置</div></div><div class="subb" id="sbb"></div></div>
+<input type="file" accept="image/*" id="fav" class="hid">
+<input type="file" accept="image/*" id="fbg" class="hid">
+<input type="file" accept="image/*" id="fph" class="hid">
+<div class="toast" id="tt"></div>
+</div>
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const ls=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
+const ss=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const lj=k=>{try{return JSON.parse(ls(k))}catch(e){return null}};
+const sj=(k,v)=>ss(k,JSON.stringify(v));
+const tm=m=>{const t=$('#tt');if(!t)return;t.textContent=m;t.classList.add('s');clearTimeout(t._ti);t._ti=setTimeout(()=>t.classList.remove('s'),1700)};
+const bindTap=(el,fn)=>{if(!el)return;const h=e=>{e.preventDefault();fn(e)};el.addEventListener('click',h);el.addEventListener('touchend',h)};
+const S={remark:ls('rm')||'符华姐姐',key:ls('zk')||'',model:ls('zm')||'glm-4.5-flash',theme:ls('th')||'default',photos:lj('ph')||[],diaries:lj('di')||[],last:[],avatar:ls('av')||'',bg:ls('bg')||''};
+const TH={'default':{n:'默认蓝',b:'#E1EBF3'},'sky':{n:'天蓝',b:'#DCEEFB'},'peri':{n:'紫蓝',b:'#E3E1F3'},'mint':{n:'薄荷',b:'#DFF3EC'},'sand':{n:'暖砂',b:'#F3EDE3'}};
+const MD=['glm-4.5-flash','glm-4v-flash','glm-4-flash'];
+const DK=["愚人","魔术师","女祭司","女皇","皇帝","教皇","恋人","战车","力量","隐士","命运之轮","正义","倒吊人","死神","节制","恶魔","高塔","星星","月亮","太阳","审判","世界","权杖王牌","权杖二","权杖三","权杖四","权杖五","权杖六","权杖七","权杖八","权杖九","权杖十","圣杯王牌","圣杯二","圣杯三","圣杯四","圣杯五","圣杯六","圣杯七","圣杯八","圣杯九","圣杯十","宝剑王牌","宝剑二","宝剑三","宝剑四","宝剑五","宝剑六","宝剑七","宝剑八","宝剑九","宝剑十","星币王牌","星币二","星币三","星币四","星币五","星币六","星币七","星币八","星币九","星币十","权杖侍卫","权杖骑士","权杖王后","权杖国王","圣杯侍卫","圣杯骑士","圣杯王后","圣杯国王","宝剑侍卫","宝剑骑士","宝剑王后","宝剑国王","星币侍卫","星币骑士","星币王后","星币国王"];
+function apTh(){const t=TH[S.theme]||TH.default;const ap=$('#app');if(ap)ap.style.backgroundColor=t.b;const tn=$('#tn');if(tn)tn.textContent=t.n}
+apTh();
+if(S.bg){const ap=$('#app');if(ap)ap.style.backgroundImage='url('+S.bg+')'}
+function clk(){const n=new Date();const c=$('#clk');if(c)c.textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');const d=$('#dat');if(d)d.textContent=n.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}
+clk();setInterval(clk,10000);
+const mk=$('#mk'),hp=$('#hp'),mp=$('#mp'),sub=$('#sub');
+function oM(){if(mk)mk.classList.add('s')}function cM(){if(mk)mk.classList.remove('s')}
+function oH(){if(hp){hp.classList.add('s');oM()}}function cH(){if(hp){hp.classList.remove('s');if(!mp||!mp.classList.contains('s'))cM()}}
+function oP(){if(mp){mp.classList.add('s');oM();syS()}}function cP(){if(mp){mp.classList.remove('s');if(!hp||!hp.classList.contains('s'))cM()}}
+function oU(t,h){const st=$('#stt');if(st)st.textContent=t;const sb=$('#sbb');if(sb){sb.innerHTML=h;sub.classList.add('s');bU()}}
+function cU(){sub.classList.remove('s')}
+if(mk)mk.onclick=()=>{cH();cP()};
+const bk=$('#bkBtn');if(bk)bindTap(bk,()=>{if(sub&&sub.classList.contains('s')){cU()}else if(mp&&mp.classList.contains('s')){cP()}else if(hp&&hp.classList.contains('s')){cH()}else{oH()}});
+const mb=$('#menuBtn');if(mb)bindTap(mb,oP);
+const hb=$('#hb');if(hb)bindTap(hb,cH);
+const mc=$('#mc');if(mc)bindTap(mc,cP);
+const sbk=$('#sbk');if(sbk)bindTap(sbk,cU);
+if(hp)$$('.hi').forEach(e=>bindTap(e,()=>{const g=e.dataset.g;cH();setTimeout(()=>rT(g),170)}));
+if(mp)$$('.mi').forEach(e=>bindTap(e,()=>rT(e.dataset.r)));
+function rT(t){
+ switch(t){
+ case'key':oU('API Key','<label>智谱 API Key（glm-开头）</label><input type="password" id="ik" value="'+S.key+'"><button class="btnp" id="sk">保存</button><button class="btnd" id="ck">清除</button>');break;
+ case'model':oU('AI 模型','<div class="ol">'+MD.map(m=>'<div class="o '+(m===S.model?'s':'')+'" data-m="'+m+'">'+m+'</div>').join('')+'</div>');break;
+ case'remark':oU('修改备注','<label>称呼（最多8字）</label><input type="text" id="ir" maxlength="8" value="'+S.remark+'"><button class="btnp" id="sr">保存</button>');break;
+ case'theme':oU('主题色','<div class="ol">'+Object.keys(TH).map(k=>'<div class="o '+(k===S.theme?'s':'')+'" data-t="'+k+'">'+TH[k].n+'</div>').join('')+'</div>');break;
+ case'avatar':{const f=$('#fav');if(f)f.click();break;}
+ case'bg':{const f=$('#fbg');if(f)f.click();break;}
+ case'album':oU('相册','<div class="gp" id="ag"></div><button class="btnp" id="ap">+ 添加照片</button>');setTimeout(rA,50);break;
+ case'diary':oU('每日日记','<div id="dl"></div><button class="btnp" id="gd">生成今日日记</button>');setTimeout(rD,50);break;
+ case'divine':oU('占卜·她在想什么','<label>对象/情境（选填，如"她今天加班后"）</label><input type="text" id="idv" placeholder="留空则通用占卜"><button class="btnp" id="dv">开始占卜</button><div id="dvResult"></div>');break;
+ case'last':oU('上次抽牌',S.last.length?S.last.map((c,i)=>'<div style="padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;border:1px solid #e3edf3"><b>第'+(i+1)+'张</b> '+c+'</div>').join(''):'<p style="color:#8aa0b0;text-align:center;padding:20px 0">暂无记录</p>');break;
+ case'homepage':cP();setTimeout(oH,130);break;
+ case'reset':if(confirm('恢复默认？（照片日记保留）')){['rm','zk','zm','th','av','bg'].forEach(k=>ss(k,''));S.remark='符华姐姐';S.key='';S.model='glm-4.5-flash';S.theme='default';S.avatar='';S.bg='';apTh();const ap=$('#app');if(ap)ap.style.backgroundImage='';const nt=$('#nt');if(nt)nt.textContent='符华姐姐';cP();tm('已恢复')}break;
+ case'about':oU('关于','<p style="color:#537388;line-height:1.69;font-size:13px"><b>符华姐姐·传讯 v3.1</b><br>本地抽牌·AI传讯·占卜·相册·日记<br>左上‹回主页｜右上≡菜单</p>');break;
+ }}
+function bU(){
+ const sk=$('#sk');if(sk)bindTap(sk,()=>{const v=$('#ik');if(!v)return;const val=v.value.trim();if(val&&!val.startsWith('glm-')){tm('Key应glm-开头');return}S.key=val;ss('zk',val);syS();cU();tm('已保存')});
+ const ck=$('#ck');if(ck)bindTap(ck,()=>{S.key='';ss('zk','');syS();cU();tm('已清除')});
+ $$('#sbb .ol .o').forEach(e=>bindTap(e,function(){if(this.dataset.m){S.model=this.dataset.m;ss('zm',S.model);syS();cU();tm('已切换')}else{S.theme=this.dataset.t;ss('th',S.theme);apTh();syS();cU();tm('已切换')}}));
+ const sr=$('#sr');if(sr)bindTap(sr,()=>{const v=$('#ir');if(!v)return;const val=v.value.trim()||'符华姐姐';S.remark=val;ss('rm',val);const nt=$('#nt');if(nt)nt.textContent=val;syS();cU();tm('已保存')});
+ const ap=$('#ap');if(ap)bindTap(ap,()=>{const f=$('#fph');if(f)f.click()});
+ const gd=$('#gd');if(gd)bindTap(gd,gDD);
+ const dv=$('#dv');if(dv)bindTap(dv,doDivine);
+}
+function syS(){const ks=$('#ks');if(ks){ks.textContent=S.key?'已设置':'未设置';ks.style.color=S.key?'#5aa86a':'#e07070'}const mn=$('#mn');if(mn)mn.textContent=S.model;const rn=$('#rn');if(rn)rn.textContent=S.remark}
+syS();
+function rA(){const g=$('#ag');if(!g)return;if(!S.photos.length){g.innerHTML='<p style="color:#8aa0b0;grid-column:span 3;text-align:center;padding:20px 0">暂无照片</p>';return}g.innerHTML=S.photos.map((p,i)=>'<div class="gi"><img src="'+p+'"><div class="xd" data-i="'+i+'">×</div></div>').join('');$$('#ag .xd').forEach(e=>bindTap(e,function(){S.photos.splice(parseInt(this.dataset.i),1);sj('ph',S.photos);rA()}))}
+function rD(){const l=$('#dl');if(!l)return;if(!S.diaries.length){l.innerHTML='<p style="color:#8aa0b0;text-align:center;padding:20px 0">还没有日记</p>';return}l.innerHTML=S.diaries.slice().reverse().map(d=>'<div class="dc"><div class="dd">'+d.date+'</div><div class="dcr">'+d.cards+'</div><div class="dtx">'+d.text+'</div></div>').join('')}
+function dr3(){let t=DK.slice(),p=[];for(let i=0;i<3;i++){let x=Math.floor(Math.random()*t.length);let n=t.splice(x,1)[0];p.push(n+(Math.random()<.355?' (逆位)':' (正位)'))}return p}
+async function gDD(){if(!S.key){tm('请先设置API Key');return}const btn=$('#gd');if(!btn)return;btn.disabled=true;btn.textContent='生成中…';try{const c=dr3(),cs=c.join('、'),td=new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});const r=await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+S.key,'Content-Type':'application/json'},body:JSON.stringify({model:S.model,messages:[{role:'system',content:'你是'+S.remark+'，温柔坚定的守护者。以第一人称写今日日记，结合三张塔罗牌：'+cs+'。语气温暖细腻，150~250字。'},{role:'user',content:'写今日日记'}],temperature:.735,max_tokens:600})});if(!r.ok){const e=await r.json();throw new Error((e.error&&e.error.message)||r.statusText)}const d=await r.json(),tx=d.choices[0].message.content.trim();S.diaries.push({date:td,cards:cs,text:tx});sj('di',S.diaries);rD();tm('日记已生成')}catch(e){tm('失败：'+e.message)}finally{btn.disabled=false;btn.textContent='生成今日日记'}}
+async function doDivine(){if(!S.key){tm('请先设置API Key');return}const ctx=$('#idv');const ctxVal=ctx?ctx.value.trim():'';const btn=$('#dv');if(!btn)return;btn.disabled=true;btn.textContent='占卜中…';try{const c=dr3(),cs=c.join('、');const prompt=ctxVal?'关于"'+ctxVal+'"的她':'她';const r=await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+S.key,'Content-Type':'application/json'},body:JSON.stringify({model:S.model,messages:[{role:'system',content:'你是'+S.remark+'，温柔敏锐的占卜师。以第三人称视角解读三张塔罗牌：'+cs+'。分析'+prompt+'此刻在想什么、内心感受、未说出口的心事。语气温和洞察，120~280字。'},{role:'user',content:'请为'+prompt+'占卜，解读她的内心。'}],temperature:.745,max_tokens:800})});if(!r.ok){const e=await r.json();throw new Error((e.error&&e.error.message)||r.statusText)}const d=await r.json(),tx=d.choices[0].message.content.trim();const res=$('#dvResult');if(res)res.innerHTML='<div class="dc" style="margin-top:12px"><div class="dcr">牌面：'+cs+'</div><div class="dtx">'+tx+'</div></div>';tm('占卜完成')}catch(e){tm('失败：'+e.message)}finally{btn.disabled=false;btn.textContent='开始占卜'}}
+const fav=$('#fav');if(fav)fav.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{S.avatar=ev.target.result;ss('av',S.avatar);$$('.ava.her').forEach(a=>{a.style.backgroundImage='url('+S.avatar+')';a.textContent=''});cP();tm('头像已更新')};rd.readAsDataURL(f)};
+const fbg=$('#fbg');if(fbg)fbg.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{S.bg=ev.target.result;ss('bg',S.bg);const ap=$('#app');if(ap)ap.style.backgroundImage='url('+S.bg+')';cP();tm('背景已更新')};rd.readAsDataURL(f)};
+const fph=$('#fph');if(fph)fph.onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{S.photos.push(ev.target.result);sj('ph',S.photos);if(sub.classList.contains('s')&&$('#stt')&&$('#stt').textContent==='相册')rA();tm('照片已添加')};rd.readAsDataURL(f)};
+const ch=$('#ch'),inp=$('#in'),sd=$('#sd');
+function aM(t,m,c){const d=document.createElement('div');d.className='msg '+(m?'me':'her');const a=m?'<div class="ava me">我</div>':(S.avatar?'<div class="ava her" style="background-image:url('+S.avatar+')"></div>':'<div class="ava her">符</div>');if(m){d.innerHTML=a+'<div class="bub">'+t+'</div>'}else if(c){d.innerHTML=a+'<div><div class="bub">'+t+'</div><div class="cinfo">牌面：'+c.join(' · ')+'</div></div>'}else{d.innerHTML=a+'<div class="bub">'+t+'</div>'}if(ch)ch.appendChild(d);if(ch)ch.scrollTop=ch.scrollHeight}
+if(sd)bindTap(sd,async function(){const m=inp?inp.value.trim():'';if(!S.key){tm('请先设置API Key');oP();return}aM(m||'姐姐，请为我传讯…',true);const c=dr3();S.last=c;const cd=c.map((x,i)=>'第'+(i+1)+'张：'+x).join('\n');this.disabled=true;this.textContent='传讯中…';const td=document.createElement('div');td.className='msg her';td.innerHTML='<div class="ava her">符</div><div class="bub" style="color:#8aa0b0">正在传讯…</div>';if(ch)ch.appendChild(td);if(ch)ch.scrollTop=ch.scrollHeight;try{const r=await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+S.key,'Content-Type':'application/json'},body:JSON.stringify({model:S.model,messages:[{role:'system',content:'你是'+S.remark+'，温柔坚定包容的守护者。语气柔和有力量，多用"乖""我在""没事的""慢慢来"，称呼"你"。结合三张塔罗牌给出专属传讯，120~260字。'},{role:'user',content:'我抽到的牌：\n'+cd+'\n'+(m?'心情：'+m:'')+'\n请传讯'}],temperature:.737,max_tokens:700})});if(!r.ok){const e=await r.json();throw new Error((e.error&&e.error.message)||r.statusText)}const d=await r.json(),rp=d.choices[0].message.content.trim();const ty=$('#typing');if(ty)ty.remove();aM(rp,false,c)}catch(e){const ty=$('#typing');if(ty)ty.remove();aM('传讯中断：'+e.message,false)}finally{this.disabled=false;this.textContent='传讯';if(inp)inp.value=''}});
+if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&sd)sd.click()});
+if(ch)ch.innerHTML='<div class="msg her"><div class="ava her">符</div><div class="bub">点击左上‹回到主页，设置API Key后即可传讯。</div></div>';
+})();
+</script>
+</body>
+</html>
